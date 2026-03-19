@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 基础元标签 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    
+    <!-- 微信/社交平台转发卡片核心配置 -->
+    <title>万事大吉 · 电子求签机</title>
+    <meta property="og:title" content="万事大吉 · 电子求签机">
+    <meta property="og:description" content="为己谋，为人谋，为道义谋，万事大吉">
+    <meta property="og:type" content="website">
+    <!-- 自定义缩略图（建议替换为你的国风图片，尺寸 600×300px） -->
+    <meta property="og:image" content="https://picsum.photos/600/300?text=万事大吉">
+    <meta property="og:url" content="https://你的部署域名"> <!-- 部署后替换为实际链接 -->
+    <meta name="description" content="为己谋，为人谋，为道义谋，万事大吉">
+    <meta name="keywords" content="电子求签,万事大吉,国风求签,求签机">
+    
+    <!-- 引入截图库 -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "STKaiti", "KaiTi", "Microsoft Yahei", serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background: #fdf9f3;
+            color: #5a3823;
+            touch-action: manipulation;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 30px 25px;
+            border: 6px double #b38b6d;
+            background: rgba(255, 252, 247, 0.98);
+            box-shadow: 0 0 25px rgba(179, 139, 109, 0.25);
+            text-align: center;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: #8b4513;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.15);
+        }
+
+        .scene-select {
+            margin: 20px 0;
+            padding: 12px;
+            border: 1px solid #c19a6b;
+            border-radius: 4px;
+            background: rgba(255, 250, 242, 0.9);
+        }
+        .scene-select label {
+            font-size: 1.15rem;
+            color: #704214;
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        .scene-select select {
+            padding: 9px 14px;
+            font-size: 1rem;
+            border: 1px solid #c19a6b;
+            background: #fffaf0;
+            color: #5a3823;
+            border-radius: 4px;
+            cursor: pointer;
+            min-width: 220px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .scene-select select:disabled {
+            background: #f2eee8;
+            color: #a69a8f;
+            cursor: not-allowed;
+            border-color: #d4c8b8;
+        }
+
+        .tips {
+            font-size: 1.05rem;
+            color: #704214;
+            margin: 15px 0 20px;
+            line-height: 1.8;
+            padding: 10px;
+            border: 1px solid #e6d8c0;
+            border-radius: 4px;
+            background: rgba(255, 248, 238, 0.8);
+        }
+
+        .result-box {
+            padding: 28px 22px;
+            min-height: 190px;
+            margin: 22px 0;
+            border: 1px solid #c19a6b;
+            background: #fffaf0;
+            line-height: 1.9;
+            font-size: 1.15rem;
+            white-space: pre-line;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            background: #d4af37;
+            color: #5a3823;
+            border: 1px solid #b8860b;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        .btn:hover {
+            background: #b8860b;
+            color: #fff;
+        }
+        .btn:disabled {
+            background: #e6e2d8;
+            border-color: #c9c2b6;
+            color: #a69a8f;
+            cursor: not-allowed;
+        }
+        #screenshotBtn {
+            display: none;
+        }
+
+        .shake {
+            animation: shake 0.2s infinite;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+        .culture-footer {
+            font-size: 1.05rem;
+            color: #8b4513;
+            text-align: center;
+            padding: 15px 0;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .disclaimer {
+            font-size: 0.85rem;
+            color: #a68a64;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            .container {
+                padding: 22px 18px;
+                margin-bottom: 20px;
+            }
+            .result-box {
+                min-height: 170px;
+                padding: 22px 16px;
+                font-size: 1rem;
+            }
+            .btn {
+                padding: 10px 22px;
+                font-size: 1rem;
+                width: 46%;
+                min-width: 110px;
+            }
+            .scene-select select {
+                min-width: 180px;
+                font-size: 0.95rem;
+            }
+            .tips {
+                font-size: 0.95rem;
+            }
+            .culture-footer {
+                font-size: 0.95rem;
+            }
+            .disclaimer {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>万事大吉 · 电子求签机</h1>
+        
+        <div class="scene-select">
+            <label for="sceneType">选择求签类型：</label>
+            <select id="sceneType">
+                <option value="">-- 请选择 --</option>
+                <option value="career">事业发展</option>
+                <option value="interpersonal">处事待人</option>
+                <option value="self-cultivation">修身立德</option>
+                <option value="relationship">感情家庭</option>
+                <option value="emergency">应急破局</option>
+                <option value="specific">具体问题问方向（默念问题再摇签）</option>
+            </select>
+        </div>
+
+        <div class="tips">
+            诚心问事，摇签方式：1.按空格键；2.按“摇签求吉”；3.手机摇晃3次
+        </div>
+
+        <div class="result-box" id="result">等待求签...</div>
+
+        <div class="btn-group">
+            <button class="btn" id="shakeBtn" disabled>摇签求吉</button>
+            <button class="btn" id="clearBtn" onclick="clearSign()">清空结果</button>
+            <button class="btn" id="screenshotBtn" onclick="captureResult()">截图保存</button>
+        </div>
+    </div>
+
+    <div class="culture-footer">
+        为己谋，为人谋，为道义谋，万事胜意
+    </div>
+    <div class="disclaimer">
+        *仅供娱乐，切勿迷信
+    </div>
+
+    <script>
+        const sceneLuckData = {
+            "career": {
+                "吉": [{"序号":1,"关键词":"稳步","精简赠言":"循序渐进，步步高升"},{"序号":2,"关键词":"稳健","精简赠言":"稳扎稳打，万事无虞"},{"序号":3,"关键词":"深耕","精简赠言":"沉潜笃行，硕果必丰"},{"序号":4,"关键词":"合作","精简赠言":"同心协力，事半功倍"},{"序号":5,"关键词":"借力","精简赠言":"善假于物，诸事易成"},{"序号":6,"关键词":"拓展","精简赠言":"开疆拓土，境界日阔"},{"序号":7,"关键词":"进取","精简赠言":"勇毅前行，功业必成"},{"序号":8,"关键词":"精研","精简赠言":"研精覃思，事业专精"},{"序号":9,"关键词":"优化","精简赠言":"去芜存菁，效能倍增"},{"序号":10,"关键词":"引导","精简赠言":"引航定向，前路自明"},{"序号":11,"关键词":"远见","精简赠言":"高瞻远瞩，行有方向"},{"序号":12,"关键词":"再起","精简赠言":"否极泰来，鹏程致远"}],
+                "凶": [{"序号":1,"关键词":"审慎","精简赠言":"深思熟虑，行则无失"},{"序号":2,"关键词":"避锋","精简赠言":"暂避锐势，再谋前行"},{"序号":3,"关键词":"应变","精简赠言":"灵活通达，困厄无滞"},{"序号":4,"关键词":"自保","精简赠言":"守正避危，安稳无虞"},{"序号":5,"关键词":"解围","精简赠言":"化困为夷，厄去福临"},{"序号":6,"关键词":"转念","精简赠言":"移念向明，脱困立新"},{"序号":7,"关键词":"低调","精简赠言":"谦退自处，灾祸不招"},{"序号":8,"关键词":"借力","精简赠言":"取人之长，避短功成"}]
+            },
+            "interpersonal": {
+                "吉": [{"序号":1,"关键词":"调适","精简赠言":"顺应时势，运势亨通"},{"序号":2,"关键词":"平衡","精简赠言":"张弛有度，久安长安"},{"序号":3,"关键词":"取舍","精简赠言":"明辨是非，留存精华"},{"序号":4,"关键词":"调和","精简赠言":"刚柔并济，万事和宁"},{"序号":5,"关键词":"留意","精简赠言":"眼观六路，机遇自来"},{"序号":6,"关键词":"共赢","精简赠言":"互利互惠，皆大欢喜"},{"序号":7,"关键词":"承诺","精简赠言":"一诺千金，信义自立"},{"序号":8,"关键词":"奉献","精简赠言":"舍己利他，福泽深厚"},{"序号":9,"关键词":"带动","精简赠言":"率先垂范，群力共进"},{"序号":10,"关键词":"融合","精简赠言":"兼容并蓄，合力更强"}],
+                "凶": [{"序号":1,"关键词":"忍让","精简赠言":"退一步宽，让三分安"},{"序号":2,"关键词":"回避","精简赠言":"审时避厄，后福永安"},{"序号":3,"关键词":"转圜","精简赠言":"留有余地，路自宽阔"},{"序号":4,"关键词":"留心","精简赠言":"察微知著，福运不失"},{"序号":5,"关键词":"应变","精简赠言":"随机而变，无有滞碍"},{"序号":6,"关键词":"审慎","精简赠言":"明辨是非，行无纰漏"},{"序号":7,"关键词":"稳健","精简赠言":"坚守本心，邪扰不侵"}]
+            },
+            "self-cultivation": {
+                "吉": [{"序号":1,"关键词":"谨慎","精简赠言":"谨言慎行，福泽自安"},{"序号":2,"关键词":"谦逊","精简赠言":"虚怀若谷，贵人相助"},{"序号":3,"关键词":"静心","精简赠言":"淡泊明志，万事顺遂"},{"序号":4,"关键词":"反思","精简赠言":"三省吾身，智慧日长"},{"序号":5,"关键词":"修养","精简赠言":"修身养性，福气自来"},{"序号":6,"关键词":"收敛","精简赠言":"锋芒内敛，静待光华"},{"序号":7,"关键词":"积累","精简赠言":"厚积薄发，终成大器"},{"序号":8,"关键词":"克制","精简赠言":"克制私欲，福寿康宁"},{"序号":9,"关键词":"接纳","精简赠言":"海纳百川，福泽深厚"},{"序号":10,"关键词":"释怀","精简赠言":"放下执念，自在逍遥"},{"序号":11,"关键词":"守恒","精简赠言":"动态平衡，万事恒昌"},{"序号":12,"关键词":"持守","精简赠言":"守道不移，初心不改"}],
+                "凶": [{"序号":1,"关键词":"内省","精简赠言":"观心自照，慧根自生"},{"序号":2,"关键词":"自省","精简赠言":"日省吾身，迷途知返"},{"序号":3,"关键词":"克制","精简赠言":"敛欲守中，灾祸不侵"},{"序号":4,"关键词":"收敛","精简赠言":"藏锋敛芒，避凶增福"},{"序号":5,"关键词":"潜藏","精简赠言":"潜龙在渊，避祸待腾"},{"序号":6,"关键词":"磨砺","精简赠言":"历境锻心，厄尽业精"},{"序号":7,"关键词":"冷静","精简赠言":"处变不惊，决断无错"},{"序号":8,"关键词":"卸重","精简赠言":"轻装前行，避困身轻"}]
+            },
+            "relationship": {
+                "吉": [{"序号":1,"关键词":"感情","精简赠言":"琴瑟和鸣，白首同心"},{"序号":2,"关键词":"安抚","精简赠言":"心平气和，家和事兴"},{"序号":3,"关键词":"培育","精简赠言":"精心浇灌，硕果累累"},{"序号":4,"关键词":"平复","精简赠言":"心平气顺，圆满初成"},{"序号":5,"关键词":"守护","精简赠言":"悉心护持，安享无忧"},{"序号":6,"关键词":"传承","精简赠言":"薪火相传，家业长青"}],
+                "凶": [{"序号":1,"关键词":"调适","精简赠言":"身心相协，家事皆平"},{"序号":2,"关键词":"释然","精简赠言":"放下执念，家和福来"},{"序号":3,"关键词":"忍让","精简赠言":"退让一步，家宅安和"}]
+            },
+            "emergency": {
+                "吉": [{"序号":1,"关键词":"调整","精简赠言":"精准施策，事半功倍"},{"序号":2,"关键词":"顺应","精简赠言":"顺天应人，运势昌隆"},{"序号":3,"关键词":"探索","精简赠言":"探幽索隐，新机尽显"},{"序号":4,"关键词":"果断","精简赠言":"当机立断，诸事不拖"},{"序号":5,"关键词":"超越","精简赠言":"破茧而出，境界自新"},{"序号":6,"关键词":"稳固","精简赠言":"根基如磐，无惧倾颓"},{"序号":7,"关键词":"鼓舞","精简赠言":"聚心聚力，合力倍增"},{"序号":8,"关键词":"领导","精简赠言":"振臂引领，大事可成"}],
+                "凶": [{"序号":1,"关键词":"蓄力","精简赠言":"潜蓄能量，破厄如虹"},{"序号":2,"关键词":"守候","精简赠言":"静待时宜，静待转机"},{"序号":3,"关键词":"重生","精简赠言":"破茧新生，厄去运昌"},{"序号":4,"关键词":"深究","精简赠言":"探本求源，智增厄减"}]
+            }
+        };
+
+        const specificAnswers = {
+            "YES": ["宜行此事，顺天应人，功成可期","此路可行，坚守本心，终得善果","吉象已现，放手去做，万事顺遂","天时地利，人和兼具，大可为之","心之所向，素履以往，终能抵达"],
+            "NO": ["暂宜静待，审时度势，再谋后动","此路多阻，另寻蹊径，方得通途","时运未到，休养生息，静待转机","三思而行，避凶就吉，方为上策","逆势而为，徒增烦忧，不如守拙"]
+        };
+
+        const resultEl = document.getElementById("result");
+        const sceneSelect = document.getElementById("sceneType");
+        const shakeBtn = document.getElementById("shakeBtn");
+        const clearBtn = document.getElementById("clearBtn");
+        const screenshotBtn = document.getElementById("screenshotBtn");
+        
+        let appState = {
+            isShaking: false,
+            pressTimer: null,
+            shakeCount: 0,
+            lastShakeTime: 0,
+            shakeEndTimer: null,
+            forceTimeoutTimer: null
+        };
+
+        const CONFIG = {
+            SHAKE_THRESHOLD: 15,
+            SHAKE_INTERVAL: 500,
+            REQUIRED_SHAKES: 3,
+            LONG_PRESS_TIME: 300,
+            FORCE_TIMEOUT: 3000
+        };
+
+        let currentSignName = "";
+
+        function resetAllStates() {
+            if (appState.pressTimer) clearTimeout(appState.pressTimer);
+            if (appState.shakeEndTimer) clearTimeout(appState.shakeEndTimer);
+            if (appState.forceTimeoutTimer) clearTimeout(appState.forceTimeoutTimer);
+            
+            appState.isShaking = false;
+            appState.shakeCount = 0;
+            appState.lastShakeTime = 0;
+            
+            resultEl.classList.remove("shake");
+            sceneSelect.disabled = false;
+            clearBtn.disabled = false;
+            screenshotBtn.style.display = "none";
+        }
+
+        function generateSign() {
+            const selectedScene = sceneSelect.value;
+            let signText = "";
+            
+            if (selectedScene === "specific") {
+                const isYes = Math.random() > 0.4;
+                const answerType = isYes ? "YES" : "NO";
+                const randomAnswer = specificAnswers[answerType][Math.floor(Math.random() * specificAnswers[answerType].length)];
+                signText = `【具体问题指引 · ${answerType}】\n关键词：${answerType}\n赠言：${randomAnswer}\n解语：请依此指引行事，三思而后行，终得善果。`;
+                currentSignName = `具体问题指引-${answerType}.png`;
+            } else {
+                const sceneData = sceneLuckData[selectedScene];
+                const luckType = Math.random() < 0.7 ? "吉" : "凶";
+                const signList = sceneData[luckType];
+                const randomSign = signList[Math.floor(Math.random() * signList.length)];
+                const sceneNameMap = {"career":"事业发展","interpersonal":"处事待人","self-cultivation":"修身立德","relationship":"感情家庭","emergency":"应急破局"};
+                signText = `【${sceneNameMap[selectedScene]} · ${luckType}签${String(randomSign.序号).padStart(2, '0')}】\n关键词：${randomSign.关键词}\n赠言：${randomSign.精简赠言}\n解语：此签主${luckType}，宜循此道而行，诸事${luckType === "吉" ? "顺遂" : "慎行"}。`;
+                currentSignName = `${sceneNameMap[selectedScene]}-${luckType}签${String(randomSign.序号).padStart(2, '0')}.png`;
+            }
+            return signText;
+        }
+
+        function startShaking() {
+            if (appState.isShaking || sceneSelect.value === "") return;
+            
+            appState.isShaking = true;
+            sceneSelect.disabled = true;
+            clearBtn.disabled = true;
+            
+            resultEl.classList.add("shake");
+            resultEl.textContent = "摇签中...";
+            screenshotBtn.style.display = "none";
+            
+            appState.forceTimeoutTimer = setTimeout(() => {
+                if (appState.isShaking) {
+                    stopShaking();
+                }
+            }, CONFIG.FORCE_TIMEOUT);
+        }
+
+        function stopShaking() {
+            resetAllStates();
+            const signContent = generateSign();
+            resultEl.textContent = signContent;
+            screenshotBtn.style.display = "inline-block";
+        }
+
+        function captureResult() {
+            html2canvas(resultEl, {
+                backgroundColor: "#fffaf0",
+                scale: 2,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = currentSignName;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                }, 'image/png');
+            }).catch(err => {
+                alert("截图保存失败，请允许浏览器下载权限后重试");
+                console.error(err);
+            });
+        }
+
+        function clearSign() {
+            if (appState.isShaking) return;
+            
+            resultEl.textContent = "等待求签...";
+            screenshotBtn.style.display = "none";
+            currentSignName = "";
+        }
+
+        sceneSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+            shakeBtn.disabled = selectedValue === "";
+            
+            if (selectedValue === "" && !appState.isShaking) {
+                resultEl.textContent = "等待求签...";
+                screenshotBtn.style.display = "none";
+            }
+        });
+
+        shakeBtn.addEventListener('mousedown', function(e) {
+            if (this.disabled || appState.isShaking) return;
+            
+            appState.pressTimer = setTimeout(() => {
+                startShaking();
+            }, CONFIG.LONG_PRESS_TIME);
+        });
+
+        ['mouseup', 'mouseleave'].forEach(evt => {
+            shakeBtn.addEventListener(evt, function() {
+                clearTimeout(appState.pressTimer);
+                if (appState.isShaking) {
+                    stopShaking();
+                }
+            });
+        });
+
+        shakeBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            if (this.disabled || appState.isShaking) return;
+            
+            appState.pressTimer = setTimeout(() => {
+                startShaking();
+            }, CONFIG.LONG_PRESS_TIME);
+        });
+
+        shakeBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            clearTimeout(appState.pressTimer);
+            if (appState.isShaking) {
+                stopShaking();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' && !appState.isShaking && sceneSelect.value !== "") {
+                e.preventDefault();
+                appState.pressTimer = setTimeout(() => {
+                    startShaking();
+                }, CONFIG.LONG_PRESS_TIME);
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === ' ') {
+                e.preventDefault();
+                clearTimeout(appState.pressTimer);
+                if (appState.isShaking) {
+                    stopShaking();
+                }
+            }
+        });
+
+        if (window.DeviceMotionEvent) {
+            window.addEventListener('devicemotion', (e) => {
+                if (appState.isShaking || sceneSelect.value === "") return;
+                
+                const yAccel = Math.abs(e.accelerationIncludingGravity.y);
+                const now = Date.now();
+                
+                if (yAccel > CONFIG.SHAKE_THRESHOLD && (now - appState.lastShakeTime) > CONFIG.SHAKE_INTERVAL) {
+                    appState.lastShakeTime = now;
+                    appState.shakeCount++;
+                    
+                    if (appState.shakeCount >= CONFIG.REQUIRED_SHAKES) {
+                        startShaking();
+                        appState.shakeEndTimer = setTimeout(() => {
+                            stopShaking();
+                        }, 2000);
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('load', function() {
+            resetAllStates();
+            shakeBtn.disabled = sceneSelect.value === "";
+        });
+    </script>
+</body>
+</html>
